@@ -1,6 +1,7 @@
+""" Usage: python regression.py train.csv test.csv """
+
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import sys
 
 """ Training the data model """
@@ -16,17 +17,12 @@ train_x = train[:, 0]
 train_y = train[:, 1]
 
 # average values of x, y in the training dataset
-av_train_x = sum(train_x) / len(train_x)
-av_train_y = sum(train_y) / len(train_y)
+av_train_x = np.mean(train_x)
+av_train_y = np.mean(train_y)
 
 # the numerator and denominator summations for the linear regression formula
-numerator_sum = 0
-denominator_sum = 0
-
-# iterating over x, y values to compute the numerator and denominator
-for x, y in zip(train_x, train_y):
-    numerator_sum += (x - av_train_x) * (y - av_train_y)
-    denominator_sum += (x - av_train_x) ** 2
+numerator_sum = np.sum((train_x - av_train_x) * (train_y - av_train_y))
+denominator_sum = np.sum((train_x - av_train_x) ** 2)
 
 # the value slope given by linear regression formula
 slope = numerator_sum / denominator_sum
@@ -49,22 +45,19 @@ test = np.array(test_data)
 test_x = test[:, 0]
 test_y = test[:, 1]     # actual input data
 
-model_y = []            # data calculated by model
-
 # getting the expected values of y from the regression model
-for x in test_x:
-    model_y.append(slope * x + intercept)
+model_y = [(slope * x + intercept) for x in test_x]            # data calculated by model
 
 # variance of model obtained from calcution
-model_av = sum(model_y) / len(model_y)
-model_variance = sum((y - model_av) ** 2 for y in model_y) / len(model_y) 
+model_av = np.mean(model_y)
+model_variance = np.mean((model_y - model_av) ** 2)
 
 # variance of test dataset
-test_av = sum(test_y) / len(test_y)
-test_variance = sum((y - test_av) ** 2 for y in test_y) / len(test_y)
+test_av = np.mean(test_y)
+test_variance = np.mean((test_y - test_av) ** 2)
 
 # the accuracy of the model is given by r_square
 r_square = model_variance / test_variance
 
-print(r_square)
+print('Accuracy =', r_square)
 
